@@ -27,7 +27,7 @@ jobs:
         echo "${{steps.latest_release.outputs.release_tag_name}}"
         echo "${{steps.latest_release.outputs.release_body}}"
 
-    - name: Create Release
+    - name: Create Draft Release
       id: create_release
       uses: actions/create-release@v1
       env:
