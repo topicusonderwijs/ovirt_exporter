@@ -1,8 +1,7 @@
 name: Build release asserts
 
 on:
-  release:
-    types: [created]
+  release
 
 jobs:
   release-linux-amd64:
