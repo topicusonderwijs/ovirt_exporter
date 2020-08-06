@@ -1,0 +1,28 @@
+name: Get latest release version
+
+on:
+  schedule:
+    - cron:  '*/5 * * * *'
+
+jobs:
+  get-latest-version:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Fetch latest release version
+      id: latest_release
+      run: |
+        IFS='|' read name tag_name body < <(echo $(curl -sS https://api.github.com/repos/czerwonk/ovirt_exporter/releases/latest | jq -r '. | [.name, .tag_name, .body] | join("|")'))
+        echo "::set-output name=release_name::${name}"
+        echo "::set-output name=release_tag_name::${tag_name}"
+        echo "::set-output name=release_body::${body}"
+
+    # Runs a set of commands using the runners shell
+    - name: Run a multi-line script
+      run: |
+        echo ${steps.latest_release.outputs.release_name}
+        echo ${steps.latest_release.outputs.release_tag_name}
+        echo ${steps.latest_release.outputs.release_body}
+        
