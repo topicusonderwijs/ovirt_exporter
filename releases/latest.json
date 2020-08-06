@@ -1,1 +1,5 @@
-
+{
+  "name": "Disk metrics",
+  "tag_name": "0.9",
+  "body": "* added first disk metrics (disk attachements)"
+}
