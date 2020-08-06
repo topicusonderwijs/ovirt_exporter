@@ -1,0 +1,64 @@
+name: Build and publish release
+
+on:
+  push:
+#    paths:
+#      - 'release-versions/*'
+        
+jobs:
+  build-and-publish:
+    name: Build and publish
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        path: .upstream
+
+    - id: latest_release
+      run: |
+        IFS='|' read name tag_name body < <(echo $(cat .upstream/releases/latest.json | jq -r '. | [.name, .tag_name, .body] | join("|")'))
+        echo "::set-output name=release_name::${name}"
+        echo "::set-output name=release_tag_name::${tag_name}"
+        echo "::set-output name=release_body::${body}"
+
+    - uses: actions/checkout@v2
+      with:
+        repository: czerwonk/ovirt_exporter
+        ref: ${{steps.latest_release.outputs.release_tag_name}}
+
+    - name: Generate build files
+      uses: thatisuday/go-cross-build@v1
+      with:
+          platforms: 'linux/amd64'
+          package: ''
+          name: 'ovirt_exporter'
+          compress: 'true'
+          dest: 'dist'
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      continue-on-error: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v${{steps.latest_release.outputs.release_tag_name}}
+        release_name: ${{steps.latest_release.outputs.release_name}}
+        body: ${{steps.latest_release.outputs.release_body}}
+        draft: true
+        prerelease: false
+
+    - name: Upload assets
+      uses: NBTX/upload-release-assets@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        targets: './dist/*'
+
+    - uses: eregon/publish-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        release_id: ${{ steps.create_release.outputs.id }}
