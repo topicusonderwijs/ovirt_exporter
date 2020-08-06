@@ -10,8 +10,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-
     - name: Fetch latest release version
       id: latest_release
       run: |
@@ -20,16 +18,15 @@ jobs:
         echo "::set-output name=release_tag_name::${tag_name}"
         echo "::set-output name=release_body::${body}"
 
-    # Runs a set of commands using the runners shell
-    - name: Run a multi-line script
-      run: |
-        echo "${{steps.latest_release.outputs.release_name}}"
-        echo "${{steps.latest_release.outputs.release_tag_name}}"
-        echo "${{steps.latest_release.outputs.release_body}}"
-
+    - uses: actions/checkout@v2
+      with:
+        repository: czerwonk/ovirt_exporter
+        ref: ${{steps.latest_release.outputs.release_tag_name}}
+        
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
+      continue-on-error: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
