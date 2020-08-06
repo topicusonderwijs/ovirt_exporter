@@ -1,0 +1,37 @@
+name: Get latest release version
+
+on:
+  push:
+  schedule:
+    - cron:  '*/15 * * * *'
+
+jobs:
+  get-latest-version:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Fetch latest release version
+      id: latest_release
+      run: |
+        IFS='|' read name tag_name body < <(echo $(curl -sS https://api.github.com/repos/czerwonk/ovirt_exporter/releases/latest | jq -r '. | [.name, .tag_name, .body] | join("|")'))
+        echo "::set-output name=release_name::${name}"
+        echo "::set-output name=release_tag_name::${tag_name}"
+        echo "::set-output name=release_body::${body}"
+
+    - uses: actions/checkout@v2
+      with:
+        repository: czerwonk/ovirt_exporter
+        ref: ${{steps.latest_release.outputs.release_tag_name}}
+        
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      continue-on-error: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{steps.latest_release.outputs.release_tag_name}}
+        release_name: ${{steps.latest_release.outputs.release_name}}
+        body: ${{steps.latest_release.outputs.release_body}}
+        draft: false
+        prerelease: false
