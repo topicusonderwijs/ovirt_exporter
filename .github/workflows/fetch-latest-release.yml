@@ -6,7 +6,7 @@ on:
     - cron:  '*/15 1 * * *'
 
 jobs:
-  get-latest-version:
+  update-latest-release:
     runs-on: ubuntu-latest
 
     steps:
