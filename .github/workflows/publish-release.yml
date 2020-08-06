@@ -46,15 +46,14 @@ jobs:
         tag_name: ${{steps.latest_release.outputs.release_tag_name}}
         release_name: ${{steps.latest_release.outputs.release_name}}
         body: ${{steps.latest_release.outputs.release_body}}
-        draft: false
+        draft: true
         prerelease: false
 
     - name: Upload assets
-      uses: AButler/upload-release-assets@v2.0
+      uses: NBTX/upload-release-assets@v1
       with:
-        release-tag: ${{steps.latest_release.outputs.release_tag_name}}
-        files: './dist/*'
-        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        targets: './dist/*'
 
     - uses: eregon/publish-release@v1
       env:
