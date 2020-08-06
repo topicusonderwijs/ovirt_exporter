@@ -26,4 +26,15 @@ jobs:
         echo "${{steps.latest_release.outputs.release_name}}"
         echo "${{steps.latest_release.outputs.release_tag_name}}"
         echo "${{steps.latest_release.outputs.release_body}}"
-        
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{steps.latest_release.outputs.release_tag_name}}
+        release_name: ${{steps.latest_release.outputs.release_name}}
+        body: ${{steps.latest_release.outputs.release_body}}
+        draft: true
+        prerelease: false
