@@ -1,9 +1,8 @@
 name: Get latest release version
 
 on:
-  push:
   schedule:
-    - cron:  '*/15 1 * * *'
+    - cron:  '0 4 * * *'
 
 jobs:
   update-latest-release:
