@@ -2,8 +2,8 @@ name: Build and publish release
 
 on:
   push:
-#    paths:
-#      - 'release-versions/*'
+    paths:
+      - 'releases/*'
         
 jobs:
   build-and-publish:
