@@ -16,17 +16,6 @@ jobs:
       with:
         path: .upstream
 
-    - name: Fetch latest release
-      uses: rez0n/actions-github-release@main
-      id: fetch_latest_release
-      env:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        repository: "topicusonderwijs/ovirt_exporter"
-        type: "stable"
-
-    - name: Test
-      run: echo ${{ steps.fetch_latest_release.outputs.release }}
-
     - name: Fetch latest upstream release
       id: latest_upstream_release
       run: |
@@ -35,15 +24,24 @@ jobs:
         echo "::set-output name=release_tag_name::${tag_name}"
         echo "::set-output name=release_body::${body}"
 
+    - name: Fetch latest release
+      uses: rez0n/actions-github-release@main
+      id: latest_release
+      env:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        repository: "topicusonderwijs/ovirt_exporter"
+        type: "stable"
+
+
     - uses: actions/checkout@v2
-      if: steps.fetch_latest_release.outputs.release != steps.latest_upstream_release.outputs.release_tag_name
+      if: steps.latest_release.outputs.release != steps.latest_upstream_release.outputs.release_tag_name
       with:
         repository: czerwonk/ovirt_exporter
         ref: ${{steps.latest_upstream_release.outputs.release_tag_name}}
 
     - name: Generate build files
       uses: thatisuday/go-cross-build@v1
-      if: steps.fetch_latest_release.outputs.release != steps.latest_upstream_release.outputs.release_tag_name
+      if: steps.latest_release.outputs.release != steps.latest_upstream_release.outputs.release_tag_name
       with:
           platforms: 'linux/amd64'
           package: ''
@@ -54,7 +52,7 @@ jobs:
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
-      if: steps.fetch_latest_release.outputs.release != steps.latest_upstream_release.outputs.release_tag_name
+      if: steps.latest_release.outputs.release != steps.latest_upstream_release.outputs.release_tag_name
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
@@ -66,7 +64,7 @@ jobs:
 
     - name: Upload assets
       uses: NBTX/upload-release-assets@v1
-      if: steps.fetch_latest_release.outputs.release != steps.latest_upstream_release.outputs.release_tag_name
+      if: steps.flatest_release.outputs.release != steps.latest_upstream_release.outputs.release_tag_name
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
@@ -74,7 +72,7 @@ jobs:
         targets: './dist/*'
 
     - uses: eregon/publish-release@v1
-      if: steps.fetch_latest_release.outputs.release != steps.latest_upstream_release.outputs.release_tag_name
+      if: steps.latest_release.outputs.release != steps.latest_upstream_release.outputs.release_tag_name
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
