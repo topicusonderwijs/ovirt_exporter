@@ -1,6 +1,6 @@
 {
   "name": "Disk metrics",
   "tag_name": "0.9",
-  "published_at": "2021-02-10T16:00:30Z",
+  "published_at": "2021-02-10T16:35:24Z",
   "body": "* added first disk metrics (disk attachements)"
 }
