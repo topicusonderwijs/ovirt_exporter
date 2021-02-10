@@ -64,7 +64,7 @@ jobs:
 
     - name: Upload assets
       uses: NBTX/upload-release-assets@v1
-      if: steps.flatest_release.outputs.release != steps.latest_upstream_release.outputs.release_tag_name
+      if: steps.latest_release.outputs.release != steps.latest_upstream_release.outputs.release_tag_name
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
