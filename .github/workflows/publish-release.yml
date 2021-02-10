@@ -1,10 +1,11 @@
 name: Build and publish release
 
 on:
-  push:
-    paths:
-      - 'releases/*'
-        
+  workflow_run:
+    workflows: ["Get latest release version"]
+    types:
+      - completed
+
 jobs:
   build-and-publish:
     name: Build and publish
