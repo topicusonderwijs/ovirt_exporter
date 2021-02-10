@@ -3,7 +3,7 @@ name: Get latest release version
 on:
   workflow_dispatch:
   schedule:
-    - cron:  '0 4 * * *'
+    - cron:  '0 22 * * 5'
 
 jobs:
   update-latest-release:
@@ -14,7 +14,7 @@ jobs:
 
     - name: Fetch latest releases
       run: |
-        curl -sS https://api.github.com/repos/czerwonk/ovirt_exporter/releases/latest | jq -r '{name, tag_name, body}' > releases/latest.json
+        curl -sS https://api.github.com/repos/czerwonk/ovirt_exporter/releases/latest | jq -r '{name, tag_name, published_at, body} | .published_at? |= (now | gmtime | todate)' > releases/latest.json
 
     - uses: stefanzweifel/git-auto-commit-action@v4
       with:
