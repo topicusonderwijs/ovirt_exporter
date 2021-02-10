@@ -56,9 +56,9 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: v${{steps.latest_release.outputs.release_tag_name}}
-        release_name: ${{steps.latest_release.outputs.release_name}}
-        body: ${{steps.latest_release.outputs.release_body}}
+        tag_name: v${{steps.latest_upstream_release.outputs.release_tag_name}}
+        release_name: ${{steps.latest_upstream_release.outputs.release_name}}
+        body: ${{steps.latest_upstream_release.outputs.release_body}}
         draft: true
         prerelease: false
 
