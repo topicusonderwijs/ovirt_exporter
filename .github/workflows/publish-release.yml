@@ -16,12 +16,16 @@ jobs:
       with:
         path: .upstream
 
-    - name: Fetch latest release version
+    - name: Fetch latest release
+      uses: rez0n/actions-github-release@main
       id: fetch_latest_release
-      uses: reloc8/action-latest-release-version@1.0.0
+      env:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        repository: "topicusonderwijs/ovirt_exporter"
+        type: "stable"
 
     - name: Test
-      run: echo ${{ steps.fetch-latest-release.outputs.latest-release }}
+      run: echo ${{ steps.fetch_latest_release.outputs.release }}
 
     - id: latest_release
       run: |
