@@ -1,6 +1,6 @@
 {
-  "name": "Disk metrics",
-  "tag_name": "0.9",
-  "published_at": "2021-03-12T22:02:03Z",
-  "body": "* added first disk metrics (disk attachements)"
+  "name": "0.9.1",
+  "tag_name": "0.9.1",
+  "published_at": "2021-03-19T22:02:19Z",
+  "body": "## Changelog\n\n5fe83bd remove freebsd build\n\n"
 }
