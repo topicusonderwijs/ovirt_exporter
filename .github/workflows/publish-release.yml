@@ -21,7 +21,7 @@ jobs:
       run: |
         IFS='|' read name tag_name body < <(echo $(cat .upstream/releases/latest.json | jq -r '. | [.name, .tag_name, .body] | join("|")'))
         echo "::set-output name=release_name::${name}"
-        echo "::set-output name=release_tag_name::v${tag_name}"
+        echo "::set-output name=release_tag_name::${tag_name}"
         echo "::set-output name=release_body::${body}"
 
     - name: Fetch latest release
